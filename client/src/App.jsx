@@ -2,6 +2,8 @@ import { useState } from 'react';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
 import TablaCostos from './components/TablaCostos';
+import CrearPlanta from './components/CrearPlanta';
+import CrearOperacion from './components/CrearOperacion';
 
 function App() {
   const [usuario, setUsuario] = useState(() => {
@@ -9,8 +11,7 @@ function App() {
     return guardado ? JSON.parse(guardado) : null;
   });
 
-  // ESTADO DE NAVEGACIÓN
-  // Por defecto, mostramos la tabla de la planta 1 (Perú)
+  
   const [vista, setVista] = useState({ tipo: 'COSTOS', id: 1 });
 
   const handleLogin = (datosUsuario) => {
@@ -23,7 +24,6 @@ function App() {
     localStorage.removeItem('sistema_usuario');
   };
 
-  // Función para cambiar de pantalla
   const navegar = (tipo, id = null) => {
     setVista({ tipo, id });
   };
@@ -64,18 +64,12 @@ function App() {
 
             {/* CASO 2: GESTIONAR OPERACIONES (Próximamente) */}
             {vista.tipo === 'OPERACIONES' && (
-              <div className="p-10 text-center bg-white rounded-lg shadow">
-                <h2 className="text-2xl text-gray-400 font-bold mb-2">🚧 En Construcción</h2>
-                <p>Aquí irá el formulario para crear nuevas operaciones globales.</p>
-              </div>
+              <CrearOperacion />
             )}
 
             {/* CASO 3: CREAR PLANTA (Próximamente) */}
             {vista.tipo === 'CREAR_PLANTA' && (
-              <div className="p-10 text-center bg-white rounded-lg shadow">
-                <h2 className="text-2xl text-gray-400 font-bold mb-2">🏭 Nueva Planta</h2>
-                <p>Aquí irá el formulario para registrar una nueva sede.</p>
-              </div>
+              <CrearPlanta alTerminar={() => alert("¡Sede creada! Ya puedes verla en el menú.")} />
             )}
 
           </div>
