@@ -52,10 +52,9 @@ const resolvers = {
     obtenerCostos: async (_, { plantaId }) => {
       return await prisma.costoIndirecto.findMany({ where: { plantaId } });
     },
-
-    // Devuelve qué operaciones ya tiene configuradas esta planta
+    
     obtenerOperacionesDePlanta: async (_, { plantaId }) => {
-      // Buscamos costos distintos para saber qué operaciones hay
+      
       const costos = await prisma.costoIndirecto.findMany({
         where: { plantaId },
         distinct: ['operacionId'],
@@ -66,13 +65,13 @@ const resolvers = {
   },
 
   Mutation: {
-    // LOGIN "FIND OR CREATE"
+    
     login: async (_, { dni, nombre }) => {
       const usuarioExistente = await prisma.usuario.findUnique({ where: { dni } });
       if (usuarioExistente) {
         return usuarioExistente;
       }
-      // Si no existe, lo creamos
+     
       return await prisma.usuario.create({
         data: { dni, nombre: nombre || "Usuario Nuevo" }
       });
@@ -82,7 +81,7 @@ const resolvers = {
     crearOperacion: async (_, { nombre }) => await prisma.operacion.create({ data: { nombre } }),
     crearRango: async (_, { nombre, orden }) => await prisma.rango.create({ data: { nombre, orden } }),
 
-    // ASIGNACIÓN MANUAL (Tu propuesta)
+    
     asignarOperacionAPlanta: async (_, { plantaId, operacionId }) => {
       const rangos = await prisma.rango.findMany();
       
@@ -93,8 +92,7 @@ const resolvers = {
         monto: 0.00
       }));
 
-      // Usamos createMany para insertar todo de golpe
-      // El skipDuplicates evita error si le dan clic dos veces
+     
       await prisma.costoIndirecto.createMany({
         data: costosIniciales,
         skipDuplicates: true 

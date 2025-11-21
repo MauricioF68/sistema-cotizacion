@@ -31,7 +31,7 @@ model Rango {
 
 model Usuario {
   id        Int      @id @default(autoincrement())
-  nombre    String?  // Opcional, por si solo mete DNI
+  nombre    String?  
   dni       String   @unique
   creadoEn  DateTime @default(now())
 }
