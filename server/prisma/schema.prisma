@@ -29,6 +29,13 @@ model Rango {
   costos  CostoIndirecto[]
 }
 
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nombre    String?  // Opcional, por si solo mete DNI
+  dni       String   @unique
+  creadoEn  DateTime @default(now())
+}
+
 // 4. Costo
 model CostoIndirecto {
   id          Int   @id @default(autoincrement())
@@ -46,3 +53,4 @@ model CostoIndirecto {
   
   @@unique([plantaId, operacionId, rangoId])
 }
+
