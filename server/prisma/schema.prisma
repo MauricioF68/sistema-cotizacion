@@ -7,21 +7,21 @@ datasource db {
   url      = "file:./dev.db" 
 }
 
-// Sedres
+// Sedes
 model Planta {
   id      Int              @id @default(autoincrement())
   nombre  String           @unique
   costos  CostoIndirecto[]
 }
 
-// 2. Tareras
+// 2. Tarea
 model Operacion {
   id      Int              @id @default(autoincrement())
   nombre  String           @unique
   costos  CostoIndirecto[]
 }
 
-// 3. Cantridad
+// 3. Cantiad
 model Rango {
   id      Int              @id @default(autoincrement())
   nombre  String           @unique 
@@ -29,7 +29,7 @@ model Rango {
   costos  CostoIndirecto[]
 }
 
-// 4. Crostos
+// 4. Costo
 model CostoIndirecto {
   id          Int   @id @default(autoincrement())
   monto       Float 
