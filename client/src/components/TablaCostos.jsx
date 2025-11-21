@@ -23,12 +23,10 @@ const GUARDAR_COSTO = gql`
   }
 `;
 
-const TablaCostos = () => {
-  const PLANTA_ID = 1; // Por ahora usaremos Perú (ID 1) fijo
-
-  // Hook para leer datos
+// eslint-disable-next-line react/prop-types
+const TablaCostos = ({ plantaId }) => { 
   const { loading, error, data } = useQuery(OBTENER_DATOS, {
-    variables: { plantaId: PLANTA_ID },
+    variables: { plantaId: Number(plantaId)},
     pollInterval: 0, // No recargar automáticamente, solo al guardar
   });
 
@@ -51,7 +49,7 @@ const TablaCostos = () => {
     if (!isNaN(valor)) {
       guardarCosto({
         variables: {
-          plantaId: PLANTA_ID,
+          plantaId: Number(plantaId),
           operacionId: Number(operacionId),
           rangoId: Number(rangoId),
           monto: valor
