@@ -1,11 +1,48 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db" 
+}
+
+// Sedres
+model Planta {
+  id      Int              @id @default(autoincrement())
+  nombre  String           @unique
+  costos  CostoIndirecto[]
+}
+
+// 2. Tareras
+model Operacion {
+  id      Int              @id @default(autoincrement())
+  nombre  String           @unique
+  costos  CostoIndirecto[]
+}
+
+// 3. Cantridad
+model Rango {
+  id      Int              @id @default(autoincrement())
+  nombre  String           @unique 
+  orden   Int              @default(0) 
+  costos  CostoIndirecto[]
+}
+
+// 4. Crostos
+model CostoIndirecto {
+  id          Int   @id @default(autoincrement())
+  monto       Float 
+
+  plantaId    Int
+  planta      Planta    @relation(fields: [plantaId], references: [id])
+
+  operacionId Int
+  operacion   Operacion @relation(fields: [operacionId], references: [id])
+
+  rangoId     Int
+  rango       Rango     @relation(fields: [rangoId], references: [id])
+
+  
+  @@unique([plantaId, operacionId, rangoId])
 }
