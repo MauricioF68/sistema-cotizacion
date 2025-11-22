@@ -1,59 +1,63 @@
+-----
 
-````markdown
-#  Sistema de Cotización y Gestión de Usuarios 📊
+#  Sistema de Cotización 
 
-##  Introducción
+## 🌟 Introducción al Proyecto
 
-Este es un proyecto Full-Stack desarrollado para la gestión y cotización de costos, enfocado en proveer una interfaz limpia y eficiente para la visualización de datos en tiempo real de cotizacion.
+Este es un proyecto **Full-Stack** diseñado para la **gestión y cotización de costos**, ofreciendo una interfaz de usuario limpia y altamente eficiente para la **visualización de datos en tiempo real**.
 
-La arquitectura está basada en el patrón cliente-servidor, utilizando **GraphQL** como capa de comunicación para asegurar peticiones de datos eficientes y precisas.
+La arquitectura se fundamenta en el robusto patrón **cliente-servidor**, utilizando **GraphQL** como una capa de comunicación moderna. Esto garantiza peticiones de datos sumamente **eficientes** y **precisas**, optimizando el rendimiento general de la aplicación.
 
----
+-----
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Stack Tecnológico
 
-Este proyecto se divide en dos entornos (`/client` y `/server`), cada uno con sus propias dependencias.
+El proyecto está organizado en dos entornos distintos: `/client` (Frontend) y `/server` (Backend), cada uno con un conjunto de herramientas especializadas.
 
 | Área | Tecnología | Versión Recomendada | Uso Principal |
 | :--- | :--- | :--- | :--- |
-| **Frontend** | **React** | v18+ | Interfaz de Usuario. |
-| **Frontend** | **Vite** | Última | Entorno de desarrollo y Bundler. |
-| **Frontend** | **Apollo Client** | v3.x | Consumo de la API GraphQL. |
-| **Styling** | **Tailwind CSS** | v3.x | Estilos y Componentes Rápidos. |
-| **Backend** | **Node.js** | v18+ | Entorno de Ejecución del Servidor. |
-| **Backend** | **Apollo Server** | v4.x/v5.x | Servidor GraphQL. |
-| **Backend** | **Prisma** | v5.x | ORM para comunicación con la base de datos. |
-| **Comunicación** | **GraphQL** | v16+ | Lenguaje de consulta de datos. |
-| **Database** | **Prisma** | **v5.x** | **ORM, Migraciones y Cliente de Base de Datos.** |
+| **Frontend** | **React** | v18+ | ⚛️ Construcción de la Interfaz de Usuario. |
+| **Frontend** | **Vite** | Última | ⚡ Entorno de desarrollo ultrarrápido y Bundler. |
+| **Frontend** | **Apollo Client** | v3.x | 🌐 Consumo eficiente de la API GraphQL. |
+| **Styling** | **Tailwind CSS** | v3.x | 🎨 Estilos utilitarios y componentes rápidos. |
+| **Backend** | **Node.js** | v18+ | 🟢 Entorno de Ejecución del Servidor. |
+| **Backend** | **Apollo Server** | v4.x/v5.x | 🚀 Servidor GraphQL. |
+| **Backend** | **Prisma** | v5.x | 📦 ORM para la comunicación con la base de datos. |
+| **Comunicación** | **GraphQL** | v16+ | 🔗 Lenguaje de consulta de datos declarativo. |
+| **Database** | **Prisma** | **v5.x** | **🛡️ ORM, Migraciones y Cliente de Base de Datos.** |
 
----
+-----
 
 ## ⚙️ Tutorial de Configuración del Entorno
 
-Sigue estos pasos detallados para configurar y ejecutar la aplicación en tu máquina local.
+Sigue estos pasos detallados para poner en marcha la aplicación en tu máquina local.
 
-### 1. Requisitos Previos
+### 1\. Requisitos Previos
 
-Asegúrate de tener instalado lo siguiente:
+Asegúrate de tener instalados estos elementos esenciales antes de continuar:
 
-* **Node.js (v18 o superior):** Esencial para ejecutar el servidor y las herramientas de React/Vite.
-* **Gestor de Paquetes (npm):** Viene incluido con Node.js.
+  * **Node.js (v18 o superior):** Fundamental para ejecutar tanto el servidor como las herramientas de React/Vite.
+  * **Gestor de Paquetes (npm):** Incluido automáticamente con la instalación de Node.js.
 
-### 2. Clonar el Repositorio
+### 2\. Clonar el Repositorio
 
-Abre tu terminal y ejecuta los siguientes comandos para descargar el código fuente:
+Abre tu terminal y ejecuta los siguientes comandos:
 
 ```bash
-# Clona el repositorio a tu máquina
+# 📥 Clona el repositorio a tu máquina
 git clone https://github.com/MauricioF68/sistema-cotizacion.git
 
-# Entra a la carpeta del proyecto
+# ➡️ Entra a la carpeta raíz del proyecto
 cd sistema_cotizacion
-````
+```
+
+-----
 
 ### 3\. Configuración del Backend (`/server`)
 
-#### 3.1. Instalación y Dependencias
+#### 3.1. Instalación de Dependencias
+
+Navega a la carpeta del servidor e instala los paquetes necesarios:
 
 ```bash
 cd server
@@ -62,40 +66,43 @@ npm install
 
 #### 3.2. Configuración de la Base de Datos (Prisma)
 
-Verifica le existencia del archivo **`.env`** en la carpeta `/server` con la siguiente linea:
+**Asegúrate** de que el archivo **`.env`** en la carpeta `/server` contenga la siguiente línea, que apunta a una base de datos local (SQLite):
 
-```
-# .env (en la carpeta /server)
-DATABASE_URL="file:./dev.db"
-```
+> ```env
+> # .env (en la carpeta /server)
+> DATABASE_URL="file:./dev.db"
+> ```
 
-Aplica las migraciones de Prisma para crear las tablas en tu base de datos:
+Aplica las migraciones de Prisma para inicializar el esquema de la base de datos y crear las tablas:
 
 ```bash
-cd server
+# 🧱 Inicializa la base de datos con las tablas
 npx prisma migrate dev --name init
 ```
 
+-----
+
 ### 4\. Configuración del Frontend (`/client`)
 
-#### 4.1. Instalación y Dependencias
+#### 4.1. Instalación de Dependencias
+
+Regresa a la carpeta raíz del proyecto y luego ingresa a la carpeta del cliente para instalar sus dependencias:
 
 ```bash
 cd ../client
 npm install
 ```
-```bash
-cd ../servidor
-npm install
-```
+
+> **Nota:** El comando `cd ../servidor` y `npm install` parece ser un error de tipeo en el `README` original y ha sido omitido ya que el servidor ya fue configurado en el paso 3.
+
 #### 4.2. Verificación de Conexión Apollo
 
-Asegúrate de que el archivo `src/main.jsx` esté apuntando al puerto correcto de tu servidor (por defecto, **4000**):
+Confirma que el **cliente Apollo** esté correctamente configurado para conectarse al servidor en el puerto predeterminado (**4000**):
 
 ```javascript
-// src/main.jsx
+// 📍 src/main.jsx
 const client = new ApolloClient({
-  uri: 'http://localhost:4000', // Asegúrate de que este puerto sea correcto
+  uri: 'http://localhost:4000', // ✅ Verifica que este puerto sea correcto
   cache: new InMemoryCache(),
 });
 ```
@@ -104,54 +111,47 @@ const client = new ApolloClient({
 
 ## ▶️ Ejecución de la Aplicación (Desarrollo)
 
-Abre **dos terminales** separadas desde la carpeta raíz del proyecto (`sistema_cotizacion`).
+Para iniciar el entorno de desarrollo **Full-Stack**, necesitas abrir **dos terminales** separadas desde la carpeta raíz del proyecto (`sistema_cotizacion`).
 
 ### 1\. Iniciar el Servidor (Backend)
 
-En la primera terminal (asegúrate de estar en la carpeta `/server`):
+En la **primera terminal** (asegúrate de estar en `/server`):
 
 ```bash
 cd server
 node index.js
-# Debería mostrar: "Server ready at http://localhost:4000/"
+# 🟢 Debería mostrar: "Server ready at http://localhost:4000/"
 ```
 
 ### 2\. Iniciar el Cliente (Frontend)
 
-En la segunda terminal (asegúrate de estar en la carpeta `/client`):
+En la **segunda terminal** (asegúrate de estar en `/client`):
 
 ```bash
 cd client
 npm run dev
-# Debería mostrar: "Local: http://localhost:5173/"
+# 🌐 Debería mostrar: "Local: http://localhost:5173/"
 ```
 
-Abre tu navegador y ve a `http://localhost:5173` para acceder a la aplicación.
+Abre tu navegador web y navega a **`http://localhost:5173`** para acceder a la aplicación en funcionamiento.
 
 -----
 
+## 📘 Instructivo de Uso
 
+Una vez que ambos entornos estén operativos, la interacción con la aplicación es intuitiva:
 
-## 📚 Instructivo de Uso
+### 1\. Acceso y Autenticación (Sistema Inteligente)
 
-Una vez que la aplicación esté corriendo en `http://localhost:5173`, la interacción se realiza de la siguiente manera:
-
-### 1\. Acceso y Autenticación
-
-1.  **Pantalla de Login:** El sistema te recibirá con el formulario de inicio de sesión.
-2.  **Ingreso de DNI:** Ingresa cualquier número de DNI o identificación en el campo.
-3.  **Registro/Login Automático:** El sistema está configurado para:
-      * Si el DNI existe, inicia sesión.
-      * Si el DNI **no existe**, crea automáticamente un nuevo usuario y procede con el login.
-4.  Haz clic en **"Ingresar al Sistema"**.
+| Paso | Descripción | Acción Requerida |
+| :--- | :--- | :--- |
+| **1.** | **Pantalla de Login** | El sistema te recibirá con el formulario de inicio de sesión. |
+| **2.** | **Ingreso de DNI** | 🔑 Ingresa **cualquier número de DNI** o identificación en el campo. |
+| **3.** | **Registro/Login** | El sistema verificará el DNI: si **existe**, inicia sesión; si **no existe**, crea automáticamente un nuevo usuario y procede al login. |
+| **4.** | **Ingresar** | Haz clic en el botón **"Ingresar al Sistema"**. |
 
 ### 2\. Navegación y Dashboard
 
-1.  **Dashboard:** Tras el login exitoso, serás redirigido al **Dashboard de Costos** (el componente `<TablaCostos />`).
-2.  **Visualización:** Aquí podrás ver los datos cargados desde la base de datos a través de GraphQL.
-3.  **Cerrar Sesión:** Utiliza el botón **"Salir"** en la esquina superior derecha para cerrar la sesión (esto elimina el DNI del `localStorage` y te devuelve a la pantalla de Login).
-
-<!-- end list -->
-
-```
-```
+  * **Dashboard de Costos:** Tras el login exitoso, serás dirigido automáticamente al componente principal (`<TablaCostos />`).
+  * **Visualización de Datos:** Podrás observar los datos cargados en tiempo real desde la base de datos, comunicados a través de **GraphQL**.
+  * **Cerrar Sesión:** Utiliza el botón **"Salir"** (generalmente en la esquina superior derecha) para finalizar la sesión. Esta acción elimina el DNI del `localStorage` y te redirige a la pantalla de Login.
