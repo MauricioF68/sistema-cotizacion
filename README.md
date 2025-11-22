@@ -2,7 +2,7 @@
 
 #  Sistema de Cotización 
 
-## 🌟 Introducción al Proyecto
+##  Introducción al Proyecto
 
 Este es un proyecto **Full-Stack** diseñado para la **gestión y cotización de costos**, ofreciendo una interfaz de usuario limpia y altamente eficiente para la **visualización de datos en tiempo real**.
 
@@ -10,25 +10,25 @@ La arquitectura se fundamenta en el robusto patrón **cliente-servidor**, utiliz
 
 -----
 
-## 🛠️ Stack Tecnológico
+##  Stack Tecnológico
 
 El proyecto está organizado en dos entornos distintos: `/client` (Frontend) y `/server` (Backend), cada uno con un conjunto de herramientas especializadas.
 
 | Área | Tecnología | Versión Recomendada | Uso Principal |
 | :--- | :--- | :--- | :--- |
-| **Frontend** | **React** | v18+ | ⚛️ Construcción de la Interfaz de Usuario. |
-| **Frontend** | **Vite** | Última | ⚡ Entorno de desarrollo ultrarrápido y Bundler. |
-| **Frontend** | **Apollo Client** | v3.x | 🌐 Consumo eficiente de la API GraphQL. |
-| **Styling** | **Tailwind CSS** | v3.x | 🎨 Estilos utilitarios y componentes rápidos. |
-| **Backend** | **Node.js** | v18+ | 🟢 Entorno de Ejecución del Servidor. |
-| **Backend** | **Apollo Server** | v4.x/v5.x | 🚀 Servidor GraphQL. |
-| **Backend** | **Prisma** | v5.x | 📦 ORM para la comunicación con la base de datos. |
+| **Frontend** | **React** | v18+ |  Construcción de la Interfaz de Usuario. |
+| **Frontend** | **Vite** | Última |  Entorno de desarrollo ultrarrápido y Bundler. |
+| **Frontend** | **Apollo Client** | v3.x |  Consumo eficiente de la API GraphQL. |
+| **Styling** | **Tailwind CSS** | v3.x |  Estilos utilitarios y componentes rápidos. |
+| **Backend** | **Node.js** | v18+ |  Entorno de Ejecución del Servidor. |
+| **Backend** | **Apollo Server** | v4.x/v5.x |  Servidor GraphQL. |
+| **Backend** | **Prisma** | v5.x |  ORM para la comunicación con la base de datos. |
 | **Comunicación** | **GraphQL** | v16+ | 🔗 Lenguaje de consulta de datos declarativo. |
-| **Database** | **Prisma** | **v5.x** | **🛡️ ORM, Migraciones y Cliente de Base de Datos.** |
+| **Database** | **Prisma** | **v5.x** | ** ORM, Migraciones y Cliente de Base de Datos.** |
 
 -----
 
-## ⚙️ Tutorial de Configuración del Entorno
+##  Tutorial de Configuración del Entorno
 
 Sigue estos pasos detallados para poner en marcha la aplicación en tu máquina local.
 
@@ -44,10 +44,10 @@ Asegúrate de tener instalados estos elementos esenciales antes de continuar:
 Abre tu terminal y ejecuta los siguientes comandos:
 
 ```bash
-# 📥 Clona el repositorio a tu máquina
+#  Clona el repositorio a tu máquina
 git clone https://github.com/MauricioF68/sistema-cotizacion.git
 
-# ➡️ Entra a la carpeta raíz del proyecto
+#  Entra a la carpeta raíz del proyecto
 cd sistema_cotizacion
 ```
 
@@ -76,7 +76,7 @@ npm install
 Aplica las migraciones de Prisma para inicializar el esquema de la base de datos y crear las tablas:
 
 ```bash
-# 🧱 Inicializa la base de datos con las tablas
+#  Inicializa la base de datos con las tablas
 npx prisma migrate dev --name init
 ```
 
@@ -100,16 +100,16 @@ npm install
 Confirma que el **cliente Apollo** esté correctamente configurado para conectarse al servidor en el puerto predeterminado (**4000**):
 
 ```javascript
-// 📍 src/main.jsx
+//  src/main.jsx
 const client = new ApolloClient({
-  uri: 'http://localhost:4000', // ✅ Verifica que este puerto sea correcto
+  uri: 'http://localhost:4000', //  Verifica que este puerto sea correcto
   cache: new InMemoryCache(),
 });
 ```
 
 -----
 
-## ▶️ Ejecución de la Aplicación (Desarrollo)
+##  Ejecución de la Aplicación (Desarrollo)
 
 Para iniciar el entorno de desarrollo **Full-Stack**, necesitas abrir **dos terminales** separadas desde la carpeta raíz del proyecto (`sistema_cotizacion`).
 
@@ -120,7 +120,7 @@ En la **primera terminal** (asegúrate de estar en `/server`):
 ```bash
 cd server
 node index.js
-# 🟢 Debería mostrar: "Server ready at http://localhost:4000/"
+#  Debería mostrar: "Server ready at http://localhost:4000/"
 ```
 
 ### 2\. Iniciar el Cliente (Frontend)
@@ -130,14 +130,14 @@ En la **segunda terminal** (asegúrate de estar en `/client`):
 ```bash
 cd client
 npm run dev
-# 🌐 Debería mostrar: "Local: http://localhost:5173/"
+#  Debería mostrar: "Local: http://localhost:5173/"
 ```
 
 Abre tu navegador web y navega a **`http://localhost:5173`** para acceder a la aplicación en funcionamiento.
 
 -----
 
-## 📘 Instructivo de Uso
+##  Instructivo de Uso
 
 Una vez que ambos entornos estén operativos, la interacción con la aplicación es intuitiva:
 
