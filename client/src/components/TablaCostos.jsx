@@ -1,122 +1,172 @@
-import { useQuery, useMutation, gql } from '@apollo/client';
+import { useState, useEffect } from 'react';
 
-// 1. CONSULTA (Traer datos del servidor)
-const OBTENER_DATOS = gql`
-  query ObtenerDatosMaestros($plantaId: Int!) {
-    obtenerRangos { id nombre orden }
-    obtenerOperaciones { id nombre }
-    obtenerCostos(plantaId: $plantaId) {
-      monto
-      operacionId
-      rangoId
+const TablaCostos = () => {
+  const [plantas, setPlantas] = useState([]);
+  const [rangos, setRangos] = useState([]);
+  const [operaciones, setOperaciones] = useState([]);
+  
+  const [sedeSeleccionada, setSedeSeleccionada] = useState('');
+  const [costos, setCostos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
+  const fetchGraphQL = async (query, variables = {}) => {
+    const response = await fetch('http://localhost:4000/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, variables }),
+    });
+    const result = await response.json();
+    return result.data;
+  };
+
+  useEffect(() => {
+    const initData = async () => {
+      const query = `
+        query {
+          obtenerPlantas { id nombre }
+          obtenerRangos { id nombre orden }
+          obtenerOperaciones { id nombre }
+        }
+      `;
+      const data = await fetchGraphQL(query);
+      setPlantas(data.obtenerPlantas);
+      setRangos(data.obtenerRangos);
+      setOperaciones(data.obtenerOperaciones);
+    };
+    initData();
+  }, []);
+
+  useEffect(() => {
+    if (!sedeSeleccionada) {
+      setCostos([]);
+      return;
     }
-  }
-`;
 
-// 2. MUTACIÓN (Guardar datos al salir de la celda)
-const GUARDAR_COSTO = gql`
-  mutation GuardarCosto($plantaId: Int!, $operacionId: Int!, $rangoId: Int!, $monto: Float!) {
-    guardarCosto(plantaId: $plantaId, operacionId: $operacionId, rangoId: $rangoId, monto: $monto) {
-      id
-      monto
-    }
-  }
-`;
+    const cargarCostos = async () => {
+      setLoading(true);
+      try {
+        const query = `
+          query($plantaId: Int!) {
+            obtenerCostos(plantaId: $plantaId) {
+              monto
+              operacionId
+              rangoId
+            }
+          }
+        `;
+        const data = await fetchGraphQL(query, { plantaId: parseInt(sedeSeleccionada) });
+        setCostos(data.obtenerCostos);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-// eslint-disable-next-line react/prop-types
-const TablaCostos = ({ plantaId }) => { 
-  const { loading, error, data } = useQuery(OBTENER_DATOS, {
-    variables: { plantaId: Number(plantaId)},
-    pollInterval: 0, // No recargar automáticamente, solo al guardar
+    cargarCostos();
+  }, [sedeSeleccionada]);
+
+  const costosPorOp = {};
+  costos.forEach(c => {
+    if (!costosPorOp[c.operacionId]) costosPorOp[c.operacionId] = [];
+    costosPorOp[c.operacionId].push(c);
   });
 
-  // Hook para guardar datos
-  const [guardarCosto] = useMutation(GUARDAR_COSTO);
-
-  // Función auxiliar para buscar el precio en la lista plana que devuelve la API
-  const obtenerMonto = (operacionId, rangoId) => {
-    const costo = data.obtenerCostos.find(
-      (c) => c.operacionId === Number(operacionId) && c.rangoId === Number(rangoId)
-    );
-    return costo ? costo.monto : '';
-  };
-
-  // Función que se ejecuta al salir del input (onBlur)
-  const handleGuardar = (e, operacionId, rangoId) => {
-    const valor = parseFloat(e.target.value);
-    
-    // Solo guardamos si es un número válido
-    if (!isNaN(valor)) {
-      guardarCosto({
-        variables: {
-          plantaId: Number(plantaId),
-          operacionId: Number(operacionId),
-          rangoId: Number(rangoId),
-          monto: valor
-        },
-        refetchQueries: [OBTENER_DATOS] // Recargar datos para asegurar sincronización
-      });
-    }
-  };
-
-  if (loading) return <p className="p-5 text-gray-500">Cargando datos...</p>;
-  if (error) return <p className="p-5 text-red-500">Error: {error.message}</p>;
+  const getNombreOp = (id) => operaciones.find(op => parseInt(op.id) === id)?.nombre || '...';
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md animate-fade-in">
-      <div className="mb-4 flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-800">Costos Indirectos - Planta Perú</h2>
-        <span className="text-sm text-blue-600 font-medium cursor-pointer hover:underline">
-          ⚙️ Configurar Columnas
-        </span>
-      </div>
+    <div className="bg-white p-8 rounded-lg shadow-md mt-6">
+      
+      {/* Encabezado y Selector */}
+      <div className="flex justify-between items-center mb-8 border-b pb-4">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Reporte de Costos</h2>
+          <p className="text-sm text-gray-500">Consulta de tarifas por sede</p>
+        </div>
 
-      <div className="overflow-x-auto border border-gray-200 rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200">
-          {/* ENCABEZADOS DINÁMICOS (RANGOS) */}
-          <thead className="bg-gray-900 text-white">
-            <tr>
-              <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">
-                Operación
-              </th>
-              {data.obtenerRangos.map((rango) => (
-                <th key={rango.id} className="py-3 px-4 text-center text-xs font-bold uppercase tracking-wider border-l border-gray-700">
-                  {rango.nombre}
-                </th>
-              ))}
-            </tr>
-          </thead>
-
-          {/* CUERPO DINÁMICO (OPERACIONES) */}
-          <tbody className="bg-white divide-y divide-gray-200">
-            {data.obtenerOperaciones.map((op) => (
-              <tr key={op.id} className="hover:bg-blue-50 transition-colors">
-                {/* Nombre de la Operación */}
-                <td className="py-3 px-4 text-sm font-bold text-gray-700 whitespace-nowrap">
-                  {op.nombre}
-                </td>
-
-                {/* Celdas de Precios (Iteramos los rangos de nuevo para crear las columnas) */}
-                {data.obtenerRangos.map((rango) => (
-                  <td key={`${op.id}-${rango.id}`} className="p-2 border-l border-gray-100 text-center">
-                    <input 
-                      type="number" 
-                      step="0.01"
-                      defaultValue={obtenerMonto(op.id, rango.id)}
-                      onBlur={(e) => handleGuardar(e, op.id, rango.id)}
-                      className="w-24 p-1 text-center text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                      placeholder="0.00"
-                    />
-                  </td>
-                ))}
-              </tr>
+        <div className="flex items-center gap-3">
+          <label className="font-medium text-gray-700">Seleccionar Sede:</label>
+          <select
+            className="border border-gray-300 p-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            value={sedeSeleccionada}
+            onChange={(e) => setSedeSeleccionada(e.target.value)}
+          >
+            <option value="">-- Seleccione --</option>
+            {plantas.map(p => (
+              <option key={p.id} value={p.id}>{p.nombre}</option>
             ))}
-          </tbody>
-        </table>
+          </select>
+        </div>
       </div>
-      <p className="mt-2 text-xs text-gray-400 text-right">
-        * Los cambios se guardan automáticamente al salir de la celda.
-      </p>
+
+      {/* Estado Vacío */}
+      {!sedeSeleccionada && (
+        <div className="text-center py-12 bg-gray-50 rounded border border-dashed">
+          <p className="text-gray-400 text-lg">👆 Selecciona una sede arriba para ver sus costos.</p>
+        </div>
+      )}
+
+      {/* Tabla de Reporte */}
+      {sedeSeleccionada && (
+        <>
+          {loading ? (
+            <p className="text-center py-10 text-blue-500">Cargando datos...</p>
+          ) : (
+            <div className="overflow-x-auto border rounded-lg shadow-sm">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-800 text-white">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider w-48">
+                      Operación
+                    </th>
+                    {rangos.map(r => (
+                      <th key={r.id} className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider border-l border-gray-700">
+                        {r.nombre}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200 text-sm">
+                  {Object.keys(costosPorOp).length === 0 ? (
+                    <tr>
+                      <td colSpan={rangos.length + 1} className="text-center py-8 text-gray-400 italic">
+                        Esta sede no tiene operaciones asignadas aún.
+                      </td>
+                    </tr>
+                  ) : (
+                    Object.keys(costosPorOp).map(opIdInt => {
+                      const opId = parseInt(opIdInt);
+                      const fila = costosPorOp[opId];
+                      return (
+                        <tr key={opId} className="hover:bg-blue-50 transition-colors">
+                          <td className="px-4 py-3 font-medium text-gray-900 bg-gray-50 border-r">
+                            {getNombreOp(opId)}
+                          </td>
+                          {rangos.map(r => {
+                            const celda = fila.find(c => parseInt(c.rangoId) === parseInt(r.id));
+                            const valor = celda ? celda.monto : 0;
+                            return (
+                              <td key={r.id} className="px-2 py-3 text-right text-gray-600 tabular-nums">
+                                {valor > 0 ? (
+                                  <span className="font-semibold text-gray-800">
+                                    ${valor.toFixed(2)}
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-300">-</span>
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

@@ -83,22 +83,35 @@ const resolvers = {
 
     
     asignarOperacionAPlanta: async (_, { plantaId, operacionId }) => {
-      const rangos = await prisma.rango.findMany();
-      
-      const costosIniciales = rangos.map(rango => ({
-        plantaId,
-        operacionId,
-        rangoId: rango.id,
-        monto: 0.00
-      }));
-
-     
-      await prisma.costoIndirecto.createMany({
-        data: costosIniciales,
-        skipDuplicates: true 
-      });
-
-      return true;
+      try {
+        
+        const rangos = await prisma.rango.findMany();
+        
+        if (rangos.length === 0) return false;
+        for (const rango of rangos) {
+          await prisma.costoIndirecto.upsert({
+            where: {
+              plantaId_operacionId_rangoId: {
+                plantaId: plantaId,
+                operacionId: operacionId,
+                rangoId: rango.id
+              }
+            },
+            update: {},
+            create: {
+              plantaId: plantaId,
+              operacionId: operacionId,
+              rangoId: rango.id,
+              monto: 0.00 
+            }
+          });
+        }
+        
+        return true;
+      } catch (error) {
+        console.error("Error al asignar:", error);
+        throw new Error("No se pudo asignar la operación");
+      }
     },
 
     guardarCosto: async (_, { plantaId, operacionId, rangoId, monto }) => {
@@ -110,6 +123,36 @@ const resolvers = {
     }
   }
 };
+
+
+async function asegurarRangosCompletos() {
+  const rangosCompletos = [
+    { nombre: '300 KG', orden: 1 },
+    { nombre: '500 KG', orden: 2 },
+    { nombre: '1 T', orden: 3 },
+    { nombre: '3 T', orden: 4 },
+    { nombre: '5 T', orden: 5 },
+    { nombre: '10 T', orden: 6 },
+    { nombre: '20 T', orden: 7 },
+    { nombre: '30 T', orden: 8 }
+  ];
+
+  console.log('⚡ Verificando rangos...');
+  
+  for (const rango of rangosCompletos) {
+    try {
+      await prisma.rango.create({ data: rango });
+    } catch (e) {
+      if (e.code === 'P2002') {
+      } else {
+        console.error("Error desconocido al crear rango:", e);
+      }
+    }
+  }
+  console.log('✅ Verificación de rangos terminada.');
+}
+asegurarRangosCompletos();
+
 
 const server = new ApolloServer({ typeDefs, resolvers });
 const { url } = await startStandaloneServer(server, { listen: { port: 4000 } });

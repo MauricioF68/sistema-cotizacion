@@ -1,62 +1,117 @@
-import { useState } from 'react';
-import { useMutation, gql } from '@apollo/client';
-
-const CREAR_OPERACION = gql`
-  mutation CrearOperacion($nombre: String!) {
-    crearOperacion(nombre: $nombre) {
-      id
-      nombre
-    }
-  }
-`;
+import { useState, useEffect } from 'react';
 
 const CrearOperacion = () => {
   const [nombre, setNombre] = useState('');
+  const [operaciones, setOperaciones] = useState([]);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   
-  const [crearOperacion, { loading }] = useMutation(CREAR_OPERACION, {
-    onCompleted: () => {
-      setNombre('');
-      alert('¡Operación agregada al catálogo global!');
-    }
-  });
+  const fetchGraphQL = async (query, variables = {}) => {
+    const response = await fetch('http://localhost:4000/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, variables }),
+    });
+    const result = await response.json();
+    if (result.errors) throw new Error(result.errors[0].message);
+    return result.data;
+  };
 
-  const handleSubmit = (e) => {
+  const cargarOperaciones = async () => {
+    try {
+      const query = `
+        query {
+          obtenerOperaciones {
+            id
+            nombre
+          }
+        }
+      `;
+      const data = await fetchGraphQL(query);
+      setOperaciones(data.obtenerOperaciones);
+    } catch (err) {
+      console.error(err);
+      setError('Error al cargar el catálogo.');
+    }
+  };
+
+  useEffect(() => {
+    cargarOperaciones();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!nombre.trim()) return;
-    crearOperacion({ variables: { nombre } });
+    setLoading(true);
+    setError('');
+
+    const mutation = `
+      mutation($nombre: String!) {
+        crearOperacion(nombre: $nombre) {
+          id
+          nombre
+        }
+      }
+    `;
+
+    try {
+      await fetchGraphQL(mutation, { nombre });
+      await cargarOperaciones();
+      setNombre('');
+    } catch (err) {
+      setError('Error al crear: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-8 rounded-lg shadow-md border-l-4 border-blue-500">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">⚙️ Catálogo de Operaciones</h2>
-      <p className="mb-4 text-sm text-gray-600">
-        Aquí registras los procesos disponibles (Ej: Corte, Barnizado). 
-        Luego podrás asignarlos a cada planta individualmente.
-      </p>
+    <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md mt-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">
+        Catálogo Global de Operaciones
+      </h2>
       
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Nombre del Proceso / Operación
-          </label>
-          <input
-            type="text"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Ej: Troquelado"
-            required
-          />
-        </div>
-        
-        <button
+      {/* Formulario */}
+      <form onSubmit={handleSubmit} className="flex gap-4 mb-8">
+        <input
+          type="text"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          placeholder="Ej: Corte, Laminado, Sellado..."
+          className="flex-1 p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+          disabled={loading}
+        />
+        <button 
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors"
+          className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 font-medium transition-colors disabled:bg-gray-400"
         >
-          {loading ? 'Guardando...' : 'Agregar al Catálogo'}
+          {loading ? 'Guardando...' : 'Agregar'}
         </button>
       </form>
+
+      {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>}
+
+      {/* Lista */}
+      <div className="border rounded-lg overflow-hidden">
+        <div className="bg-gray-50 px-4 py-3 border-b font-semibold text-gray-600 text-sm uppercase tracking-wide">
+          Operaciones Registradas
+        </div>
+        <ul className="divide-y divide-gray-100 max-h-96 overflow-y-auto">
+          {operaciones.length === 0 ? (
+            <li className="p-6 text-gray-400 italic text-center">
+              No hay operaciones en el catálogo global.
+            </li>
+          ) : (
+            operaciones.map((op) => (
+              <li key={op.id} className="p-4 hover:bg-gray-50 flex items-center gap-3 transition-colors">
+                <span className="w-2.5 h-2.5 bg-green-500 rounded-full shadow-sm"></span>
+                <span className="text-gray-700 font-medium">{op.nombre}</span>
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
     </div>
   );
 };
